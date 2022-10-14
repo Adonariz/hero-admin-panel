@@ -1,17 +1,5 @@
-import { heroDelete } from "../../actions";
-import { useDispatch, useSelector } from "react-redux";
-
 const HeroesListItem = (props) => {
-  const { id, name, description, element } = props;
-
-  const { heroes } = useSelector((state) => state);
-  const dispatch = useDispatch();
-
-  const onItemDelete = (id) => {
-    const newHeroesList = heroes.filter((item) => item.id !== id);
-
-    dispatch(heroDelete(newHeroesList));
-  };
+  const { id, name, description, element, onDelete } = props;
 
   let elementClassName;
 
@@ -51,7 +39,7 @@ const HeroesListItem = (props) => {
           type="button"
           className="btn-close btn-close"
           aria-label="Close"
-          onClick={() => onItemDelete(id)}
+          onClick={() => onDelete(id)}
         ></button>
       </span>
     </li>
