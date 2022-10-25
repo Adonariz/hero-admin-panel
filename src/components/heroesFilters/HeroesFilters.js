@@ -1,4 +1,14 @@
-import { useRef } from "react";
+import { useEffect } from "react";
+import { useHttp } from "../../hooks/http.hook";
+import {
+  filtersFetching,
+  filtersFetched,
+  filtersFetchingError,
+  activeFilterChanged,
+} from "../../actions";
+import { useSelector, useDispatch } from "react-redux";
+import Spinner from "../spinner/Spinner";
+import classNames from "classnames";
 
 // Задача для этого компонента:
 // Фильтры должны формироваться на основании загруженных данных
@@ -8,60 +18,69 @@ import { useRef } from "react";
 // Представьте, что вы попросили бэкенд-разработчика об этом
 
 const HeroesFilters = () => {
-  const itemRefs = useRef([]);
+  // const itemRefs = useRef([]);
+  const { activeFilter, filters, filtersLoadingStatus } = useSelector(
+    (state) => state
+  );
 
-  const onFilterClick = (evt) => {
-    const target = evt.target;
+  const { request } = useHttp();
+  const dispatch = useDispatch();
 
-    const items = itemRefs.current;
-    const targetIndex = items.indexOf(target);
+  useEffect(() => {
+    dispatch(filtersFetching());
+    request("http://localhost:3001/filters")
+      .then((data) => {
+        dispatch(filtersFetched(data));
+      })
+      .catch(() => dispatch(filtersFetchingError()));
 
-    items.forEach((item) => item.classList.remove("active"));
+    // eslint-disable-next-line
+  }, []);
 
-    items[targetIndex].classList.add("active");
+  // const onFilterClick = (evt) => {
+  //   const target = evt.target;
+
+  //   const items = itemRefs.current;
+  //   const targetIndex = items.indexOf(target);
+
+  //   items.forEach((item) => item.classList.remove("active"));
+
+  //   items[targetIndex].classList.add("active");
+  // };
+
+  const renderFilters = (arr) => {
+    return arr.map(({ name, label, className }) => {
+      let btnClass = classNames("btn", className, {
+        active: name === activeFilter,
+      });
+
+      return (
+        <button
+          key={name}
+          id={name}
+          // ref={(elem) => (itemRefs.current[i] = elem)}
+          onClick={() => dispatch(activeFilterChanged(name))}
+          className={btnClass}
+        >
+          {label}
+        </button>
+      );
+    });
   };
+
+  if (filtersLoadingStatus === "loading") {
+    return <Spinner />;
+  } else if (filtersLoadingStatus === "error") {
+    return <h5 className="text-center mt-5">Ошибка загрузки</h5>;
+  }
+
+  const buttons = renderFilters(filters);
 
   return (
     <div className="card shadow-lg mt-4">
       <div className="card-body">
         <p className="card-text">Отфильтруйте героев по элементам</p>
-        <div className="btn-group">
-          <button
-            ref={(elem) => itemRefs.current.push(elem)}
-            onClick={onFilterClick}
-            className="btn btn-outline-dark active"
-          >
-            Все
-          </button>
-          <button
-            ref={(elem) => itemRefs.current.push(elem)}
-            className="btn btn-danger"
-            onClick={onFilterClick}
-          >
-            Огонь
-          </button>
-          <button
-            ref={(elem) => itemRefs.current.push(elem)}
-            className="btn btn-primary"
-            onClick={onFilterClick}
-          >
-            Вода
-          </button>
-          <button
-            ref={(elem) => itemRefs.current.push(elem)}
-            className="btn btn-success"
-            onClick={onFilterClick}
-          >
-            Ветер
-          </button>
-          <button
-            ref={(elem) => itemRefs.current.push(elem)}
-            className="btn btn-secondary"
-            onClick={onFilterClick}
-          >
-            Земля
-          </button>
-        </div>
+        <div className="btn-group">{buttons}</div>
       </div>
     </div>
   );
