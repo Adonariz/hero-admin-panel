@@ -1,6 +1,7 @@
+import { useHttp } from "../../hooks/http.hook";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { heroAdd } from "../../actions";
+import { useDispatch, useSelector } from "react-redux";
+import { heroCreated } from "../../actions";
 import { v4 as uuid } from "uuid";
 
 // Задача для этого компонента:
@@ -22,6 +23,8 @@ const HeroesAddForm = () => {
 
   const [newHero, setNewHero] = useState(initialState);
   const dispatch = useDispatch();
+  const { request } = useHttp();
+  const { filters, filtersLoadingStatus } = useSelector((state) => state);
 
   const onInputChange = (evt) => {
     setNewHero({ ...newHero, [evt.target.name]: evt.target.value });
@@ -30,6 +33,7 @@ const HeroesAddForm = () => {
   const onFormSubmit = (evt) => {
     evt.preventDefault();
 
+    // Проверяем, что форма не пустая
     if (JSON.stringify(initialState) === JSON.stringify(newHero)) return;
 
     const newHeroToAdd = {
@@ -37,8 +41,41 @@ const HeroesAddForm = () => {
       ...newHero,
     };
 
-    dispatch(heroAdd(newHeroToAdd));
+    // Отправляем данные на сервер в формате JSON
+    // ТОЛЬКО если запрос успешен - отправляем персонажа в store
+    request(
+      "http://localhost:3001/heroes",
+      "POST",
+      JSON.stringify(newHeroToAdd)
+    )
+      .then((res) => console.log(res, "added successfully"))
+      .then(dispatch(heroCreated(newHeroToAdd)))
+      .catch((err) => console.log(err));
+
+    // Очищаем форму после отправки
     setNewHero(initialState);
+  };
+
+  const renderFilters = (filters, status) => {
+    if (status === "loading") {
+      return <option>Загрузка элементов</option>;
+    } else if (status === "error") {
+      return <option>Ошибка загрузки</option>;
+    }
+
+    if (filters && filters.length > 0) {
+      return filters.map(({ name, label }) => {
+        // Один из фильтров нам тут не нужен
+        // eslint-disable-next-line
+        if (name === "all") return;
+
+        return (
+          <option key={name} value={name}>
+            {label}
+          </option>
+        );
+      });
+    }
   };
 
   return (
@@ -88,10 +125,7 @@ const HeroesAddForm = () => {
           onChange={onInputChange}
         >
           <option value="">Я владею элементом...</option>
-          <option value="fire">Огонь</option>
-          <option value="water">Вода</option>
-          <option value="wind">Ветер</option>
-          <option value="earth">Земля</option>
+          {renderFilters(filters, filtersLoadingStatus)}
         </select>
       </div>
 

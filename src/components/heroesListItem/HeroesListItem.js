@@ -1,5 +1,5 @@
 const HeroesListItem = (props) => {
-  const { id, name, description, element, onDelete } = props;
+  const { name, description, element, onDelete } = props;
 
   let elementClassName;
 
@@ -39,7 +39,7 @@ const HeroesListItem = (props) => {
           type="button"
           className="btn-close btn-close"
           aria-label="Close"
-          onClick={() => onDelete(id)}
+          onClick={onDelete}
         ></button>
       </span>
     </li>
