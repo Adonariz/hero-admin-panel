@@ -4,14 +4,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { heroCreated } from "../../actions";
 import { v4 as uuid } from "uuid";
 
-// Задача для этого компонента:
-// Реализовать создание нового героя с введенными данными. Он должен попадать
-// в общее состояние и отображаться в списке + фильтроваться
-// Уникальный идентификатор персонажа можно сгенерировать через uiid
-// Усложненная задача:
+// Задача этого компонента:
+// Создание нового героя с введенными данными. Он попадает
+// в общее состояние и отображается в списке
+// Уникальный идентификатор персонажа сгенерирован через uiid
 // Персонаж создается и в файле json при помощи метода POST
-// Дополнительно:
-// Элементы <option></option> желательно сформировать на базе
+// Элементы <option></option> сформированы на базе
 // данных из фильтров
 
 const HeroesAddForm = () => {
@@ -24,7 +22,9 @@ const HeroesAddForm = () => {
   const [newHero, setNewHero] = useState(initialState);
   const dispatch = useDispatch();
   const { request } = useHttp();
-  const { filters, filtersLoadingStatus } = useSelector((state) => state);
+  const { filters, filtersLoadingStatus } = useSelector(
+    (state) => state.filters
+  );
 
   const onInputChange = (evt) => {
     setNewHero({ ...newHero, [evt.target.name]: evt.target.value });

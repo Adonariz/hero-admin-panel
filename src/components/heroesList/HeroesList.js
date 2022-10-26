@@ -2,6 +2,7 @@ import { useHttp } from "../../hooks/http.hook";
 import { useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
+import { createSelector } from "reselect";
 
 import {
   heroesFetching,
@@ -20,7 +21,33 @@ import "./heroesList.scss";
 // Удаление идет и с json файла при помощи метода DELETE
 
 const HeroesList = () => {
-  const { filteredHeroes, heroesLoadingStatus } = useSelector((state) => state);
+  const filteredHeroesSelector = createSelector(
+    // получаем значение фильтра
+    (state) => state.filters.activeFilter,
+    // получаем список героев
+    (state) => state.heroes.heroes,
+    (filter, heroes) => {
+      if (filter === "all") {
+        return heroes;
+      } else {
+        return heroes.filter((item) => item.element === filter);
+      }
+    }
+  );
+
+  // const filteredHeroes = useSelector(({ filters, heroes }) => {
+  //   if (filters.activeFilter === "all") {
+  //     return heroes.heroes;
+  //   } else {
+  //     return heroes.heroes.filter(
+  //       (item) => item.element === filters.activeFilter
+  //     );
+  //   }
+  // });
+
+  const filteredHeroes = useSelector(filteredHeroesSelector);
+
+  const heroesLoadingStatus = useSelector((state) => state.heroesLoadingStatus);
   const dispatch = useDispatch();
   const { request } = useHttp();
 
