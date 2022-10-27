@@ -1,7 +1,9 @@
 import { createStore, combineReducers, compose, applyMiddleware } from "redux";
 import heroes from "../reducers/heroes";
 import filters from "../reducers/filters";
+import ReduxThunk from "redux-thunk";
 
+// позволяет передавать в dispatch строку с нужным type вместо функции action
 const stringMiddlware = () => (next) => (action) => {
   if (typeof action === "string") {
     return next({
@@ -41,7 +43,7 @@ const store = createStore(
     filters,
   }),
   compose(
-    applyMiddleware(stringMiddlware),
+    applyMiddleware(ReduxThunk, stringMiddlware),
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
   )
 );

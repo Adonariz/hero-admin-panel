@@ -1,3 +1,11 @@
+// объединяет actions для загрузки списка героев
+export const fetchHeroes = (request) => (dispatch) => {
+  dispatch(heroesFetching());
+  request("http://localhost:3001/heroes")
+    .then((data) => dispatch(heroesFetched(data)))
+    .catch(() => dispatch(heroesFetchingError()));
+};
+
 export const heroesFetching = () => {
   return {
     type: "HEROES_FETCHING",
@@ -15,6 +23,14 @@ export const heroesFetchingError = () => {
   return {
     type: "HEROES_FETCHING_ERROR",
   };
+};
+
+// объединяет actions для загрузки списка фильтров
+export const fetchFilters = (request) => (dispatch) => {
+  dispatch(filtersFetching());
+  request("http://localhost:3001/filters")
+    .then((data) => dispatch(filtersFetched(data)))
+    .catch(() => dispatch(filtersFetchingError()));
 };
 
 export const filtersFetching = () => {
@@ -42,6 +58,17 @@ export const activeFilterChanged = (filter) => {
     payload: filter,
   };
 };
+
+// вариант с дебаунсом при помощи middleware
+// export const activeFilterChanged = (filter) => (dispatch) => {
+//   setTimeout(
+//     {
+//       type: "ACTIVE_FILTER_CHANGED",
+//       payload: filter,
+//     },
+//     1000
+//   );
+// };
 
 export const heroCreated = (hero) => {
   return {
