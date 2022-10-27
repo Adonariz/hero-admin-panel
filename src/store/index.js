@@ -1,29 +1,39 @@
-import { createStore, combineReducers, compose } from "redux";
+import { createStore, combineReducers, compose, applyMiddleware } from "redux";
 import heroes from "../reducers/heroes";
 import filters from "../reducers/filters";
 
-const enhancer =
-  (createStore) =>
-  (...args) => {
-    const store = createStore(...args);
+const stringMiddlware = () => (next) => (action) => {
+  if (typeof action === "string") {
+    return next({
+      type: action,
+    });
+  }
 
-    // создаем ссылку на оригинальный dispatch
-    const oldDispatch = store.dispatch;
+  return next(action);
+};
 
-    // подменяем функцию dispatch
-    store.dispatch = (action) => {
-      // если в dispatch приходит строка, то объект создаем и возвращаем вручную
-      if (typeof action === "string") {
-        return oldDispatch({
-          type: action,
-        });
-      }
+// const enhancer =
+//   (createStore) =>
+//   (...args) => {
+//     const store = createStore(...args);
 
-      return oldDispatch(action);
-    };
+//     // создаем ссылку на оригинальный dispatch
+//     const oldDispatch = store.dispatch;
 
-    return store;
-  };
+//     // подменяем функцию dispatch
+//     store.dispatch = (action) => {
+//       // если в dispatch приходит строка, то объект создаем и возвращаем вручную
+//       if (typeof action === "string") {
+//         return oldDispatch({
+//           type: action,
+//         });
+//       }
+
+//       return oldDispatch(action);
+//     };
+
+//     return store;
+//   };
 
 const store = createStore(
   combineReducers({
@@ -31,7 +41,7 @@ const store = createStore(
     filters,
   }),
   compose(
-    enhancer,
+    applyMiddleware(stringMiddlware),
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
   )
 );
