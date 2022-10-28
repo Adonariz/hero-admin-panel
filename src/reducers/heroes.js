@@ -15,7 +15,7 @@ const initialState = {
 const heroes = createReducer(initialState, (builder) => {
   builder
     .addCase(heroesFetching, (state) => {
-      // redux-toolkit позволяет напрямую вносить измения, поскольку сам берет на себя работу с иммутабельностью
+      // redux-toolkit позволяет напрямую вносить измения, поскольку сам берет на себя работу с иммутабельностью (immer.js)
       state.heroesLoadingStatus = "loading";
     })
     .addCase(heroesFetched, (state, action) => {
@@ -33,6 +33,31 @@ const heroes = createReducer(initialState, (builder) => {
     })
     .addDefaultCase(() => {});
 });
+
+// вариант без builder
+// const heroes = createReducer(
+//   initialState,
+//   {
+//     [heroesFetching]: (state) => {
+//       state.heroesLoadingStatus = "loading";
+//     },
+//     [heroesFetched]: (state, action) => {
+//       state.heroesLoadingStatus = "idle";
+//       state.heroes = action.payload;
+//     },
+//     [heroesFetchingError]: (state) => {
+//       state.heroesLoadingStatus = "error";
+//     },
+//     [heroCreated]: (state, action) => {
+//       state.heroes.push(action.payload);
+//     },
+//     [heroDeleted]: (state, action) => {
+//       state.heroes = state.heroes.filter((item) => item.id !== action.payload);
+//     },
+//   },
+//   [],
+//   (state) => state
+// );
 
 // вариант без тулкита
 // const heroes = (state = initialState, action) => {
