@@ -1,40 +1,41 @@
-import { createReducer } from "@reduxjs/toolkit";
-import {
-  heroesFetching,
-  heroesFetched,
-  heroesFetchingError,
-  heroCreated,
-  heroDeleted,
-} from "../actions";
+// import { createReducer } from "@reduxjs/toolkit";
+// import {
+//   heroesFetching,
+//   heroesFetched,
+//   heroesFetchingError,
+//   heroCreated,
+//   heroDeleted,
+// } from "../actions";
 
-const initialState = {
-  heroes: [],
-  heroesLoadingStatus: "idle",
-};
+// const initialState = {
+//   heroes: [],
+//   heroesLoadingStatus: "idle",
+// };
 
-const heroes = createReducer(initialState, (builder) => {
-  builder
-    .addCase(heroesFetching, (state) => {
-      // redux-toolkit позволяет напрямую вносить измения, поскольку сам берет на себя работу с иммутабельностью (immer.js)
-      state.heroesLoadingStatus = "loading";
-    })
-    .addCase(heroesFetched, (state, action) => {
-      state.heroesLoadingStatus = "idle";
-      state.heroes = action.payload;
-    })
-    .addCase(heroesFetchingError, (state) => {
-      state.heroesLoadingStatus = "error";
-    })
-    .addCase(heroCreated, (state, action) => {
-      state.heroes.push(action.payload);
-    })
-    .addCase(heroDeleted, (state, action) => {
-      state.heroes = state.heroes.filter((item) => item.id !== action.payload);
-    })
-    .addDefaultCase(() => {});
-});
+// вариант через createReducer
+// const heroes = createReducer(initialState, (builder) => {
+//   builder
+//     .addCase(heroesFetching, (state) => {
+//       // redux-toolkit позволяет напрямую вносить измения, поскольку сам берет на себя работу с иммутабельностью (immer.js)
+//       state.heroesLoadingStatus = "loading";
+//     })
+//     .addCase(heroesFetched, (state, action) => {
+//       state.heroesLoadingStatus = "idle";
+//       state.heroes = action.payload;
+//     })
+//     .addCase(heroesFetchingError, (state) => {
+//       state.heroesLoadingStatus = "error";
+//     })
+//     .addCase(heroCreated, (state, action) => {
+//       state.heroes.push(action.payload);
+//     })
+//     .addCase(heroDeleted, (state, action) => {
+//       state.heroes = state.heroes.filter((item) => item.id !== action.payload);
+//     })
+//     .addDefaultCase(() => {});
+// });
 
-// вариант без builder
+// вариант через createReducer без builder
 // const heroes = createReducer(
 //   initialState,
 //   {
@@ -93,4 +94,4 @@ const heroes = createReducer(initialState, (builder) => {
 //   }
 // };
 
-export default heroes;
+// export default heroes;

@@ -1,7 +1,8 @@
 // import { createStore, combineReducers, compose, applyMiddleware } from "redux";
 import { configureStore } from "@reduxjs/toolkit";
-import heroes from "../reducers/heroes";
-import filters from "../reducers/filters";
+// import heroes from "../reducers/heroes";
+import heroes from "../components/heroesList/heroesSlice";
+import filters from "../components/heroesFilters/filtersSlice";
 // import ReduxThunk from "redux-thunk";
 
 // позволяет передавать в dispatch строку с нужным type вместо функции action
